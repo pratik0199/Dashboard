@@ -133,7 +133,7 @@ import streamlit as st
 import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
-from streamlit_autorefresh import st_autorefresh
+#from streamlit_autorefresh import st_autorefresh
 st.set_page_config(layout="wide")
 
 st.markdown("<div style='text-align: center; font-size: 29px; font-weight: bold;'>Compressor Health Monitoring</div>", unsafe_allow_html=True)
