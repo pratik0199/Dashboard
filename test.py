@@ -14,13 +14,12 @@ warnings.filterwarnings("ignore")
 # ### Creating dataframe to store required data
 
 # In[4]:
-
-
-df1_config=pd.read_excel(r"C:\Users\Naina Sisodia\Desktop\excel_to_python.xlsx", sheet_name='config_data')
-df2_proc_data=pd.read_excel(r"C:\Users\Naina Sisodia\Desktop\excel_to_python.xlsx", sheet_name='Data')
-df_tag_list=pd.read_excel(r"C:\Users\Naina Sisodia\Desktop\excel_to_python.xlsx", sheet_name='tag_description')
-df_final_cols=pd.read_excel(r"C:\Users\Naina Sisodia\Desktop\excel_to_python.xlsx", sheet_name='final_col_list')
-df_coeff_summary=pd.read_excel(r"C:\Users\Naina Sisodia\Desktop\CoeffsLinearReg (1).xlsx")
+#testing
+df1_config=pd.read_excel("excel_to_python.xlsx", sheet_name='config_data')
+df2_proc_data=pd.read_excel("excel_to_python.xlsx", sheet_name='Data')
+df_tag_list=pd.read_excel("excel_to_python.xlsx", sheet_name='tag_description')
+df_final_cols=pd.read_excel("excel_to_python.xlsx", sheet_name='final_col_list')
+df_coeff_summary=pd.read_excel("CoeffsLinearReg (1).xlsx")
 dict_stg = {'Stage 1': {'tab1': [7, 368, 'table1_df'], 'tab2': [372, 733, 'table2_df'], 'tab3': [745, 1106, 'table3_df'], 'tab4': [1110, 1471,'table4_df']},
             'Stage 2': {'tab1': [7, 368, 'table1_df'], 'tab2': [372, 733, 'table2_df'], 'tab3': [745, 1106, 'table3_df'], 'tab4': [1110, 1471,'table4_df']}
            }
@@ -134,15 +133,14 @@ import streamlit as st
 import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
+from streamlit_autorefresh import st_autorefresh
 st.set_page_config(layout="wide")
 
-st.markdown("<h1 style='text-align: center;'>Compressor Health Monitoring</h1>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center; font-size: 29px; font-weight: bold;'>Compressor Health Monitoring</div>", unsafe_allow_html=True)
 
-# Display the compressor image
-#st.image(r"C:\Users\Naina Sisodia\Desktop\Recip crosssection.jpg", caption='Compressor Image')
 
 # Side by Side Display for S1 and S2
-excel_file = pd.ExcelFile(r'C:\Users\Naina Sisodia\Desktop\GERC_A_PARA_GUI_rev4.xlsm')
+excel_file = pd.ExcelFile("GERC_A_PARA_GUI_rev4.xlsm")
 dict_stg = {'Stage 1': {'tab1': [7, 368, 'table1_df'], 'tab2': [372, 733, 'table2_df'], 'tab3': [745, 1106, 'table3_df'], 'tab4': [1110, 1471,'table4_df']},
             'Stage 2': {'tab1': [7, 368, 'table1_df'], 'tab2': [372, 733, 'table2_df'], 'tab3': [745, 1106, 'table3_df'], 'tab4': [1110, 1471,'table4_df']}
            }
@@ -173,568 +171,428 @@ read_tables_from_excel(excel_file, dict_stg)
 # %%
 import streamlit as st
 import pandas as pd
+#from streamlit_autorefresh import st_autorefresh
 
 # Assuming df2_proc_data and dict_stg are defined
 # Define the width ratios for each column
-widths = [1, 0.5, 1]
-
-# Create three columns with adjustable width ratios
-col1, col2, col3 = st.columns(widths)
+# Create columns with adjustable width ratios
+col1, col2, col3 = st.columns([1, 1, 1])
 
 # Data for Stage 1
 with col1:
-    data_s1 = {
-        "Stage 1": [
-            "Suction Vol. Efficiency",
-            "Discharge Vol. Efficiency",
-            "Indicated Power",
-            "Adiabatic Discharge Temperature",
-            "Discharge Temperature",
-            "Suction Capacity",
-            "Discharge Capacity",
-            "Average Capacity",
-            "Flow Balance",
-            "Power/Avg Capacity Ratio",
-            "Peak Rod Load (Gas), Tension",
-            "Peak Rod Load (Gas), Compression",
-            "Peak Combined Rod load, Tension",
-            "Peak Combined Rod load, Compression"
-        ],
-        "Values": [
-            df2_proc_data['cal_avg_inlet_vol_eff %' + str('S1')].iloc[0],
-            (df2_proc_data['HE_discharge_vol_eff %' + str('S1')].iloc[0] + df2_proc_data['CE_discharge_vol_eff %' + str('S1')].iloc[0]) / 2,
-            df2_proc_data['Pad ' + str('S1')].iloc[0],
-            df2_proc_data['adiabatic_disc_temp ' + str('S1')].iloc[0] - 273,
-            df2_proc_data['actual_disc_temp_' + str('S1')].iloc[0] - 273,
-            df2_proc_data['Inlet Capacity' + str('S1')].iloc[0],
-            df2_proc_data['Discharge Capacity' + str('S1')].iloc[0],
-            (df2_proc_data['Inlet Capacity' + str('S1')].iloc[0] + df2_proc_data['Discharge Capacity' + str('S1')].iloc[0]) / 2,
-            df2_proc_data['Flow factor' + str('S1')].iloc[0],
-            df2_proc_data['Sp. consumption' + str('S1')].iloc[0],
-            max(dict_stg['Stage 1']['tab3'][2]['Gas load, KN']),
-            min(dict_stg['Stage 1']['tab3'][2]['Gas load, KN']),
-            max(dict_stg['Stage 1']['tab3'][2]['Combined rod load, KN']),
-            min(dict_stg['Stage 1']['tab3'][2]['Combined rod load, KN'])
-        ]
-    }
-    # Convert data to DataFrame
-    df_s1 = pd.DataFrame(data_s1)
-    st.table(df_s1.style.set_table_styles([{
-        'selector': 'th',
-        'props': [('background-color', 'black'), 
-                  ('color', 'white'), 
-                  ('font-weight', 'bold'),
-                  ('text-align', 'center')]
-    }, {
-        'selector': 'td',
-        'props': [('text-align', 'center')]
-    }]))
+    excel_file1 = pd.read_excel("GERC_A_PARA_GUI_rev4.xlsm", sheet_name='cur_data')
+    #st_autorefresh(interval=60 * 1000, key="data_refresh")  
+    @st.cache_data(ttl=60)  # Cache with a timeout of 1 min
+
+    def load_data():
+        return pd.read_excel("GERC_A_PARA_GUI_rev4.xlsm", sheet_name='cur_data')
+
+    # Main Streamlit app
+    def main():
+
+        # Load data
+
+        data = load_data()
+        
+
+        # Function to check valve leakage status
+        def check_valve_leakage(data):
+            suction_valve_leak_stage1 = any(df2_proc_data['Flow factor' +'S1'] > 1.04)
+            suction_valve_leak_stage2 = any(df2_proc_data['Flow factor' + 'S2'] > 1.04)
+            disch_valve_leak_stage1 = any(df2_proc_data['Flow factor' +'S1'] < 0.98)
+            disch_valve_leak_stage2 = any(df2_proc_data['Flow factor' + 'S2'] < 0.98)
+            cylinder_leak_stage1 = any(df2_proc_data['Dish temp - Ad. Disch temp' + 'S1'] > 8.5)
+            cylinder_leak_stage2 = any(df2_proc_data['Dish temp - Ad. Disch temp' + 'S2'] > 8.5)
+            return suction_valve_leak_stage1, suction_valve_leak_stage2, disch_valve_leak_stage1, disch_valve_leak_stage2, cylinder_leak_stage1, cylinder_leak_stage2
+
+        # Check valve leakage status
+        (suction_valve_leak_stage1, suction_valve_leak_stage2,
+        disch_valve_leak_stage1, disch_valve_leak_stage2,
+        cylinder_leak_stage1, cylinder_leak_stage2) = check_valve_leakage(data)
+
+        # CSS styles
+        red_box = '<div style="display: inline-block; width: 20px; height: 20px; background-color: red;"></div>'
+        green_box = '<div style="display: inline-block; width: 20px; height: 20px; background-color: green;"></div>'
+
+        # Function to get colored box
+        def get_colored_box(condition):
+            return red_box if condition else green_box
+
+        # Table data
+        table_data = {
+            "": ["Suction Valve Leak", "Discharge Valve Leak", "Cylinder Leak"],
+            "Stage 1": [get_colored_box(suction_valve_leak_stage1),
+                        get_colored_box(disch_valve_leak_stage1),
+                        get_colored_box(cylinder_leak_stage1)],
+            "Stage 2": [get_colored_box(suction_valve_leak_stage2),
+                        get_colored_box(disch_valve_leak_stage2),
+                        get_colored_box(cylinder_leak_stage2)]
+        }
+
+        # Convert to DataFrame
+        df = pd.DataFrame(table_data)
+        df.index += 1
+
+        # Display the table
+        st.write("Valve Health Status", fontsize=12, fontweight='bold')
+        st.write(df.to_html(escape=False), unsafe_allow_html=True)
+        st.write("Refreshing data in 60 seconds...")
+        time.sleep(60)
+        st.experimental_rerun()
+    if __name__ == "__main__":
+        main()
+
+    # Dropdown for selecting Stage 1 or Stage 2
+    stage_selection = st.selectbox("Select Stage", ["Stage 1", "Stage 2"])
+
+    # Data for Stage 1
+    if stage_selection == "Stage 1":
+        data_s1 = {
+            "Stage 1": [
+                "Suction Vol. Efficiency",
+                "Discharge Vol. Efficiency",
+                "Indicated Powe",
+                "Adiabatic Discharge Temperature",
+                "Discharge Temperature",
+                "Suction Capacity",
+                "Discharge Capacity",
+                "Average Capacity",
+                "Flow Balance",
+                "Power/Avg Capacity Ratio",
+                "Peak Rod Load (Gas), Tension",
+                "Peak Rod Load (Gas), Compression",
+                "Peak Combined Rod load, Tension",
+                "Peak Combined Rod load, Compression"
+            ],
+            "Values": [
+                df2_proc_data['cal_avg_inlet_vol_eff %' + str('S1')].iloc[0],
+                (df2_proc_data['HE_discharge_vol_eff %' + str('S1')].iloc[0] + df2_proc_data['CE_discharge_vol_eff %' + str('S1')].iloc[0]) / 2,
+                df2_proc_data['Pad ' + str('S1')].iloc[0],
+                df2_proc_data['adiabatic_disc_temp ' + str('S1')].iloc[0] - 273,
+                df2_proc_data['actual_disc_temp_' + str('S1')].iloc[0] - 273,
+                df2_proc_data['Inlet Capacity' + str('S1')].iloc[0],
+                df2_proc_data['Discharge Capacity' + str('S1')].iloc[0],
+                (df2_proc_data['Inlet Capacity' + str('S1')].iloc[0] + df2_proc_data['Discharge Capacity' + str('S1')].iloc[0]) / 2,
+                df2_proc_data['Flow factor' + str('S1')].iloc[0],
+                df2_proc_data['Sp. consumption' + str('S1')].iloc[0],
+                max(dict_stg['Stage 1']['tab3'][2]['Gas load, KN']),
+                min(dict_stg['Stage 1']['tab3'][2]['Gas load, KN']),
+                max(dict_stg['Stage 1']['tab3'][2]['Combined rod load, KN']),
+                min(dict_stg['Stage 1']['tab3'][2]['Combined rod load, KN'])
+            ]
+        }
+        df_s1 = pd.DataFrame(data_s1)
+        df_s1.index += 1
+        st.dataframe(df_s1, height=150)
+
+    # Data for Stage 2
+    elif stage_selection == "Stage 2":
+        data_s2 = {
+            "Stage 2": [
+                "Suction Vol. Efficiency",
+                "Discharge Vol. Efficiency",
+                "Indicated Powe",
+                "Adiabatic Discharge Temperature",
+                "Discharge Temperature",
+                "Suction Capacity",
+                "Discharge Capacity",
+                "Average Capacity",
+                "Flow Balance",
+                "Power/Avg Capacity Ratio",
+                "Peak Rod Load (Gas), Tension",
+                "Peak Rod Load (Gas), Compression",
+                "Peak Combined Rod load, Tension",
+                "Peak Combined Rod load, Compression"
+            ],
+            "Values": [
+                df2_proc_data['cal_avg_inlet_vol_eff %' + str('S2')].iloc[0],
+                (df2_proc_data['HE_discharge_vol_eff %' + str('S2')].iloc[0] + df2_proc_data['CE_discharge_vol_eff %' + str('S2')].iloc[0]) / 2,
+                df2_proc_data['Pad ' + str('S2')].iloc[0],
+                df2_proc_data['adiabatic_disc_temp ' + str('S2')].iloc[0] - 273,
+                df2_proc_data['actual_disc_temp_' + str('S2')].iloc[0] - 273,
+                df2_proc_data['Inlet Capacity' + str('S2')].iloc[0],
+                df2_proc_data['Discharge Capacity' + str('S2')].iloc[0],
+                (df2_proc_data['Inlet Capacity' + str('S2')].iloc[0] + df2_proc_data['Discharge Capacity' + str('S2')].iloc[0]) / 2,
+                df2_proc_data['Flow factor' + str('S2')].iloc[0],
+                df2_proc_data['Sp. consumption' + str('S2')].iloc[0],
+                max(dict_stg['Stage 2']['tab3'][2]['Gas load, KN']),
+                min(dict_stg['Stage 2']['tab3'][2]['Gas load, KN']),
+                max(dict_stg['Stage 2']['tab3'][2]['Combined rod load, KN']),
+                min(dict_stg['Stage 2']['tab3'][2]['Combined rod load, KN'])
+            ]
+        }
+        df_s2 = pd.DataFrame(data_s2)
+        df_s2.index += 1
+        st.dataframe(df_s2, height=200)
 
 # Image in the middle
 with col2:
-    st.image(r"C:\Users\Naina Sisodia\Desktop\Recip crosssection.jpg", caption='Compressor Image')
+    def plot_stage1():
+        fig, ax = plt.subplots()
+        ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['HE, Press'], color='red', label='HE')
+        ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab4'][2]['CE'], color='orange', label='CE')
+        
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_xlabel('Crank angle, deg')
+        ax.set_ylabel('Pressure, bar, abs')
+        ax.set_title('Stage I - Pressure vs. time', fontsize=12, fontweight='bold')
+        ax.legend()
+        ax.set_facecolor('black')
+        return fig
 
-# Data for Stage 2
+    # Function to plot HE-PV plot for Stage 1
+    def plot_stage1_he_pv():
+        fig, ax = plt.subplots()
+        ax.plot(dict_stg['Stage 1']['tab3'][2]['Swept vol, HE, %'], dict_stg['Stage 1']['tab3'][2]['HE, Press'], color='orange', label='HE')
+        
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_xlabel('Swept vol, %')
+        ax.set_ylabel('Pressure, bar, abs')
+        ax.set_title('Stage I - HE PV Plot', fontsize=12, fontweight='bold')
+        ax.legend()
+        ax.set_facecolor('black')
+        return fig
+    # Function to plot rod load for Stage 1 and Stage 2
+    def plot_stage1_rod_load():
+        fig, ax = plt.subplots()
+        ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['Gas load, KN'], color='cyan', label='Gas Load')
+        ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['Finertia  = mrecip*r*omega^2[cos(omega*t) + r/l*cos(2*omega*t)]'], color='red', label='HE')
+        ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['Combined rod load, KN'], color='yellow', label='Combined Load')
+        ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['Max rod load, compression, KN'], color='orange', linestyle='--')
+        ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['Max rod load, Tension, KN'], color='red', linestyle='--')
+        
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_facecolor('black')
+        ax.set_xlabel('Crank angle, deg')
+        ax.set_ylabel('Rod load, KN')
+        ax.set_title('Stage I - Rod Load', fontsize=12, fontweight='bold')
+        ax.legend()
+        return fig
+
+
+    # Function to plot CE-PV plot for Stage 1
+    def plot_stage1_ce_pv():
+        fig, ax = plt.subplots()
+        ax.plot(dict_stg['Stage 1']['tab3'][2]['Swept vol, HE, %'], dict_stg['Stage 1']['tab4'][2]['CE'], color='orange', label='CE')
+        
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_xlabel('Swept vol, %')
+        ax.set_ylabel('Pressure, bar, abs')
+        ax.set_title('Stage I - CE PV Plot', fontsize=7)
+        ax.legend()
+        ax.set_facecolor('black')
+        ax.set_xlim(0, 100)
+        ax.set_ylim(20, 30)
+        return fig
+
+    # Function to plot Stage 1 Flow Balance
+    def plot_stage1_flow_balance():
+        fig, ax = plt.subplots()
+            
+        ax.plot(database_df['Date'].iloc[1:26], database_df[' Stg I Flow factor'].iloc[1:26], marker='o', linestyle='-', color='orange')
+        
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_xlabel('Swept vol, %')
+        ax.set_ylabel('Pressure, bar, abs')
+        ax.set_title('Stage I - Flow Balance', fontsize=7)
+        ax.legend()
+        ax.set_facecolor('black')
+        ax.tick_params(axis='x', rotation=45)
+        return fig
+                
+        plt.show()
+
+    # Function to plot Stage 1 Adiabatic Flow Balance
+    def plot_stage1_adiabatic_flow_balance():
+        fig, ax = plt.subplots()
+        
+        # Stage I Adiabatic Flow Balance
+        ax.plot(database_df['Date'].iloc[1:26], database_df['Stg I Ad. Flow Factor'].iloc[1:26], marker='o', linestyle='-', color='orange')
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_ylabel('Ad. Flow factor')
+        ax.set_title('Stage I - Adiabatic Flow Balance', fontsize=7)
+        ax.tick_params(axis='x', rotation=45)
+        ax.set_facecolor('black')
+        return fig
+        plt.show()
+    # Function to plot Stage 1 Delta Temp
+    def plot_stage1_delta_temp():
+        fig, ax = plt.subplots()
+        
+        # Stage I Delta Temp
+        ax.plot(database_df['Date'].iloc[1:26], database_df['Stg I Act. Disc. Temp - Ad. Disch Temp'].iloc[1:26], marker='o', linestyle='-', color='orange')
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_ylabel('Act. - Ad. disch. temp')
+        ax.set_title('Stage I - Disch temp', fontsize=7)
+        ax.tick_params(axis='x', rotation=45)
+        ax.set_facecolor('black')
+        return fig
+        plt.show()
+
+        plt.tight_layout()
+
+    def main():
+        # Create the layout with one column
+        col1 = st.columns(1)[0]
+
+        with col1:
+            # List widget to select the plot for Stage 1
+            plot_options = ['Pressure vs Time', 'HE-PV Plot', 'Rod Load', 'CE PV', 'Flow Balance', 'Adiabatic Flow Balance', 'Delta Temp']
+            plot_choice = st.selectbox('Stage 1', plot_options, key='Stage 1')
+
+            # Display the selected plot for Stage 1
+            if plot_choice == 'Pressure vs Time':
+                fig1 = plot_stage1()
+            elif plot_choice == 'HE-PV Plot':
+                fig1 = plot_stage1_he_pv()
+            elif plot_choice == 'Rod Load':
+                fig1 = plot_stage1_rod_load()
+            elif plot_choice == 'CE PV':
+                fig1 = plot_stage1_ce_pv()
+            elif plot_choice == 'Flow Balance':
+                fig1 = plot_stage1_flow_balance()
+            elif plot_choice == 'Adiabatic Flow Balance':
+                fig1 = plot_stage1_adiabatic_flow_balance()
+            elif plot_choice == 'Delta Temp':
+                fig1 = plot_stage1_delta_temp()
+
+            # Display the selected plot
+            st.pyplot(fig1)
+
+    if __name__ == "__main__":
+        main()
+
+# Data for Stage 1 and Stage 2 dropdown
 with col3:
-    data_s2 = {
-        "Stage 2": [
-            "Suction Vol. Efficiency",
-            "Discharge Vol. Efficiency",
-            "Indicated Power",
-            "Adiabatic Discharge Temperature",
-            "Discharge Temperature",
-            "Suction Capacity",
-            "Discharge Capacity",
-            "Average Capacity",
-            "Flow Balance",
-            "Power/Avg Capacity Ratio",
-            "Peak Rod Load (Gas), Tension",
-            "Peak Rod Load (Gas), Compression",
-            "Peak Combined Rod load, Tension",
-            "Peak Combined Rod load, Compression"
-        ],
-        "Values": [
-            df2_proc_data['cal_avg_inlet_vol_eff %' + str('S2')].iloc[0],
-            (df2_proc_data['HE_discharge_vol_eff %' + str('S2')].iloc[0] + df2_proc_data['CE_discharge_vol_eff %' + str('S2')].iloc[0]) / 2,
-            df2_proc_data['Pad ' + str('S2')].iloc[0],
-            df2_proc_data['adiabatic_disc_temp ' + str('S2')].iloc[0] - 273,
-            df2_proc_data['actual_disc_temp_' + str('S2')].iloc[0] - 273,
-            df2_proc_data['Inlet Capacity' + str('S2')].iloc[0],
-            df2_proc_data['Discharge Capacity' + str('S2')].iloc[0],
-            (df2_proc_data['Inlet Capacity' + str('S2')].iloc[0] + df2_proc_data['Discharge Capacity' + str('S2')].iloc[0]) / 2,
-            df2_proc_data['Flow factor' + str('S2')].iloc[0],
-            df2_proc_data['Sp. consumption' + str('S2')].iloc[0],
-            max(dict_stg['Stage 2']['tab3'][2]['Gas load, KN']),
-            min(dict_stg['Stage 2']['tab3'][2]['Gas load, KN']),
-            max(dict_stg['Stage 2']['tab3'][2]['Combined rod load, KN']),
-            min(dict_stg['Stage 2']['tab3'][2]['Combined rod load, KN'])
-        ]
-    }
-    # Convert data to DataFrame
-    df_s2 = pd.DataFrame(data_s2)
-    st.table(df_s2.style.set_table_styles([{
-        'selector': 'th',
-        'props': [('background-color', 'black'), 
-                  ('color', 'white'), 
-                  ('font-weight', 'bold'),
-                  ('text-align', 'center')]
-    }, {
-        'selector': 'td',
-        'props': [('text-align', 'center')]
-    }]))
-
-
-
-# Display the tables side by side
-
-
-from matplotlib.animation import FuncAnimation
-
-
-# Function to plot pressure vs time for Stage 1
-def plot_stage1():
-    fig, ax = plt.subplots()
-    ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['HE, Press'], color='red', label='HE')
-    ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab4'][2]['CE'], color='orange', label='CE')
-    
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_xlabel('Crank angle, deg')
-    ax.set_ylabel('Pressure, bar, abs')
-    ax.set_title('Stage I - Pressure vs. time', fontsize=16, fontweight='bold')
-    ax.legend()
-    ax.set_facecolor('black')
-    return fig
-
-# Function to plot pressure vs time for Stage 2
-def plot_stage2():
-    fig, ax = plt.subplots()
-    ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Pressure, Head end, bar abs'], color='red', label='HE')
-    ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab4'][2]['Pressure, Crank end, bar abs'], color='orange', label='CE')
-    
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_xlabel('Crank angle, deg')
-    ax.set_ylabel('Pressure, bar, abs')
-    ax.set_title('Stage II - Pressure vs. time', fontsize=16, fontweight='bold')
-    ax.legend()
-    ax.set_facecolor('black')
-    return fig
-
-# Function to plot HE-PV plot for Stage 1
-def plot_stage1_he_pv():
-    fig, ax = plt.subplots()
-    ax.plot(dict_stg['Stage 1']['tab3'][2]['Swept vol, HE, %'], dict_stg['Stage 1']['tab3'][2]['HE, Press'], color='orange', label='HE')
-    
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_xlabel('Swept vol, %')
-    ax.set_ylabel('Pressure, bar, abs')
-    ax.set_title('Stage I - HE PV Plot', fontsize=16, fontweight='bold')
-    ax.legend()
-    ax.set_facecolor('black')
-    return fig
-
-# Function to plot HE-PV plot for Stage 2
-def plot_stage2_he_pv():
-    fig, ax = plt.subplots()
-    ax.plot(dict_stg['Stage 2']['tab3'][2]['Swept vol, HE, %'], dict_stg['Stage 2']['tab3'][2]['Pressure, Head end, bar abs'], color='orange', label='HE')
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_xlabel('Swept vol, %')
-    ax.set_ylabel('Pressure, bar, abs')
-    ax.set_title('Stage II - HE PV Plot', fontsize=16, fontweight='bold')
-    ax.legend()
-    ax.set_facecolor('black')
-    return fig
-
-
-# Function to plot rod load for Stage 1 and Stage 2
-def plot_stage1_rod_load():
-    fig, ax = plt.subplots()
-    ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['Gas load, KN'], color='cyan', label='Gas Load')
-    ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['Finertia  = mrecip*r*omega^2[cos(omega*t) + r/l*cos(2*omega*t)]'], color='red', label='HE')
-    ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['Combined rod load, KN'], color='yellow', label='Combined Load')
-    ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['Max rod load, compression, KN'], color='orange', linestyle='--')
-    ax.plot(dict_stg['Stage 1']['tab3'][2]['Crank angle'], dict_stg['Stage 1']['tab3'][2]['Max rod load, Tension, KN'], color='red', linestyle='--')
-    
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_facecolor('black')
-    ax.set_xlabel('Crank angle, deg')
-    ax.set_ylabel('Rod load, KN')
-    ax.set_title('Stage I - Rod Load', fontsize=16, fontweight='bold')
-    ax.legend()
-    return fig
-
-def plot_stage2_rod_load():
-    fig, ax = plt.subplots()
-    ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Gas load, KN'], color='cyan', label='Gas Load')
-    ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Finertia  = mrecip*r*omega^2[cos(omega*t) + r/l*cos(2*omega*t)]'], color='red', label='HE')
-    ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Combined rod load, KN'], color='yellow', label='Combined Load')
-    ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Max rod load, compression, KN'], color='orange', linestyle='--')
-    ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Max rod load, Tension, KN'], color='red', linestyle='--')
-       
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_facecolor('black')
-    ax.set_xlabel('Crank angle, deg')
-    ax.set_ylabel('Rod load, KN')
-    ax.set_title('Stage II - Rod Load', fontsize=16, fontweight='bold')
-    ax.legend()
-    return fig
-
-# Function to plot CE-PV plot for Stage 1
-def plot_stage1_ce_pv():
-    fig, ax = plt.subplots()
-    ax.plot(dict_stg['Stage 1']['tab3'][2]['Swept vol, HE, %'], dict_stg['Stage 1']['tab4'][2]['CE'], color='orange', label='CE')
-    
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_xlabel('Swept vol, %')
-    ax.set_ylabel('Pressure, bar, abs')
-    ax.set_title('Stage I - CE PV Plot', fontsize=7)
-    ax.legend()
-    ax.set_facecolor('black')
-    ax.set_xlim(0, 100)
-    ax.set_ylim(20, 30)
-    return fig
-
-# Function to plot CE-PV plot for Stage 2
-def plot_stage2_ce_pv():
-    fig, ax = plt.subplots()
-    ax.plot(dict_stg['Stage 2']['tab3'][2]['Swept vol, HE, %'], dict_stg['Stage 2']['tab4'][2]['Pressure, Crank end, bar abs'], color='orange', label='CE')
-    
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_xlabel('Swept vol, %')
-    ax.set_ylabel('Pressure, bar, abs')
-    ax.set_title('Stage II - CE PV Plot', fontsize=7)
-    ax.legend()
-    ax.set_facecolor('black')
-    ax.set_xlim(0, 100)
-    ax.set_ylim(20, 40)
-    return fig
-
-
-# Function to plot Stage 1 Flow Balance
-def plot_stage1_flow_balance():
-    fig, ax = plt.subplots()
+    def plot_stage2():
+        fig, ax = plt.subplots()
+        ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Pressure, Head end, bar abs'], color='red', label='HE')
+        ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab4'][2]['Pressure, Crank end, bar abs'], color='orange', label='CE')
         
-    ax.plot(database_df['Date'].iloc[1:26], database_df[' Stg I Flow factor'].iloc[1:26], marker='o', linestyle='-', color='orange')
-    
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_xlabel('Swept vol, %')
-    ax.set_ylabel('Pressure, bar, abs')
-    ax.set_title('Stage I - Flow Balance', fontsize=7)
-    ax.legend()
-    ax.set_facecolor('black')
-    ax.tick_params(axis='x', rotation=45)
-    return fig
-    
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_xlabel('Crank angle, deg')
+        ax.set_ylabel('Pressure, bar, abs')
+        ax.set_title('Stage II - Pressure vs. time', fontsize=12, fontweight='bold')
+        ax.legend()
+        ax.set_facecolor('black')
+        return fig
 
-    
-    plt.show()
+    # Function to plot HE-PV plot for Stage 2
+    def plot_stage2_he_pv():
+        fig, ax = plt.subplots()
+        ax.plot(dict_stg['Stage 2']['tab3'][2]['Swept vol, HE, %'], dict_stg['Stage 2']['tab3'][2]['Pressure, Head end, bar abs'], color='orange', label='HE')
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_xlabel('Swept vol, %')
+        ax.set_ylabel('Pressure, bar, abs')
+        ax.set_title('Stage II - HE PV Plot', fontsize=12, fontweight='bold')
+        ax.legend()
+        ax.set_facecolor('black')
+        return fig
 
-# Function to plot Stage 2 Flow Balance
-def plot_stage2_flow_balance():
-    fig, ax = plt.subplots()
-    
-    # Stage II Flow Balance
-    ax.plot(database_df['Date'].iloc[1:26], database_df[' Stg II Flow factor'].iloc[1:26], marker='o', linestyle='-', color='orange')
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_ylabel('Flow factor')
-    ax.set_title('Stage II - Flow Balance', fontsize=7)
-    ax.tick_params(axis='x', rotation=45)
-    ax.set_facecolor('black')
-    return fig
-    
-    plt.show()
+    def plot_stage2_rod_load():
+        fig, ax = plt.subplots()
+        ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Gas load, KN'], color='cyan', label='Gas Load')
+        ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Finertia  = mrecip*r*omega^2[cos(omega*t) + r/l*cos(2*omega*t)]'], color='red', label='HE')
+        ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Combined rod load, KN'], color='yellow', label='Combined Load')
+        ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Max rod load, compression, KN'], color='orange', linestyle='--')
+        ax.plot(dict_stg['Stage 2']['tab3'][2]['Crank angle'], dict_stg['Stage 2']['tab3'][2]['Max rod load, Tension, KN'], color='red', linestyle='--')
+        
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_facecolor('black')
+        ax.set_xlabel('Crank angle, deg')
+        ax.set_ylabel('Rod load, KN')
+        ax.set_title('Stage II - Rod Load', fontsize=12, fontweight='bold')
+        ax.legend()
+        return fig
 
-# Function to plot Stage 1 Adiabatic Flow Balance
-def plot_stage1_adiabatic_flow_balance():
-    fig, ax = plt.subplots()
-    
-    # Stage I Adiabatic Flow Balance
-    ax.plot(database_df['Date'].iloc[1:26], database_df['Stg I Ad. Flow Factor'].iloc[1:26], marker='o', linestyle='-', color='orange')
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_ylabel('Ad. Flow factor')
-    ax.set_title('Stage I - Adiabatic Flow Balance', fontsize=7)
-    ax.tick_params(axis='x', rotation=45)
-    ax.set_facecolor('black')
-    return fig
-    plt.show()
 
-# Function to plot Stage 2 Adiabatic Flow Balance
-database_df = excel_file.parse('database')
-def plot_stage2_adiabatic_flow_balance():
-    fig, ax = plt.subplots()
-    
-    # Stage II Adiabatic Flow Balance
-    ax.plot(database_df['Date'].iloc[1:26], database_df['Stg II Ad. Flow Factor'].iloc[1:26], marker='o', linestyle='-', color='orange')
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_ylabel('Ad. Flow factor')
-    ax.set_title('Stage II - Adiabatic Flow Balance', fontsize=7)
-    ax.tick_params(axis='x', rotation=45)
-    ax.set_facecolor('black')
-    return fig
-    plt.show()
+    # Function to plot CE-PV plot for Stage 2
+    def plot_stage2_ce_pv():
+        fig, ax = plt.subplots()
+        ax.plot(dict_stg['Stage 2']['tab3'][2]['Swept vol, HE, %'], dict_stg['Stage 2']['tab4'][2]['Pressure, Crank end, bar abs'], color='orange', label='CE')
+        
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_xlabel('Swept vol, %')
+        ax.set_ylabel('Pressure, bar, abs')
+        ax.set_title('Stage II - CE PV Plot', fontsize=7)
+        ax.legend()
+        ax.set_facecolor('black')
+        ax.set_xlim(0, 100)
+        ax.set_ylim(20, 40)
+        return fig
 
-# Function to plot Stage 1 Delta Temp
-def plot_stage1_delta_temp():
-    fig, ax = plt.subplots()
-    
-    # Stage I Delta Temp
-    ax.plot(database_df['Date'].iloc[1:26], database_df['Stg I Act. Disc. Temp - Ad. Disch Temp'].iloc[1:26], marker='o', linestyle='-', color='orange')
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_ylabel('Act. - Ad. disch. temp')
-    ax.set_title('Stage I - Disch temp', fontsize=7)
-    ax.tick_params(axis='x', rotation=45)
-    ax.set_facecolor('black')
-    return fig
-    plt.show()
+    # Function to plot Stage 2 Flow Balance
+    def plot_stage2_flow_balance():
+        fig, ax = plt.subplots()
+        
+        # Stage II Flow Balance
+        ax.plot(database_df['Date'].iloc[1:26], database_df[' Stg II Flow factor'].iloc[1:26], marker='o', linestyle='-', color='orange')
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_ylabel('Flow factor')
+        ax.set_title('Stage II - Flow Balance', fontsize=7)
+        ax.tick_params(axis='x', rotation=45)
+        ax.set_facecolor('black')
+        return fig
+        
+        plt.show()
+    # Function to plot Stage 2 Adiabatic Flow Balance
+    database_df = excel_file.parse('database')
+    def plot_stage2_adiabatic_flow_balance():
+        fig, ax = plt.subplots()
+        
+        # Stage II Adiabatic Flow Balance
+        ax.plot(database_df['Date'].iloc[1:26], database_df['Stg II Ad. Flow Factor'].iloc[1:26], marker='o', linestyle='-', color='orange')
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_ylabel('Ad. Flow factor')
+        ax.set_title('Stage II - Adiabatic Flow Balance', fontsize=7)
+        ax.tick_params(axis='x', rotation=45)
+        ax.set_facecolor('black')
+        return fig
+        plt.show()
 
-# Function to plot Stage 2 Delta Temp
-def plot_stage2_delta_temp():
-    fig, ax = plt.subplots()
-    
-    # Stage II Delta Temp
-    ax.plot(database_df['Date'].iloc[1:26], database_df['Stg II Act. Disc. Temp - Ad. Disch Temp'].iloc[1:26], marker='o', linestyle='-', color='orange')
-    ax.grid(color='white', linestyle='--', linewidth=0.25)
-    ax.set_ylabel('Act. - Ad. disch. temp')
-    ax.set_title('Stage II - Disch Temp', fontsize=7)
-    ax.tick_params(axis='x', rotation=45)
-    ax.set_facecolor('black')
-    return fig
-    plt.show()
+    # Function to plot Stage 2 Delta Temp
+    def plot_stage2_delta_temp():
+        fig, ax = plt.subplots()
+        
+        # Stage II Delta Temp
+        ax.plot(database_df['Date'].iloc[1:26], database_df['Stg II Act. Disc. Temp - Ad. Disch Temp'].iloc[1:26], marker='o', linestyle='-', color='orange')
+        ax.grid(color='white', linestyle='--', linewidth=0.25)
+        ax.set_ylabel('Act. - Ad. disch. temp')
+        ax.set_title('Stage II - Disch Temp', fontsize=7)
+        ax.tick_params(axis='x', rotation=45)
+        ax.set_facecolor('black')
+        return fig
+        plt.show()
 
-    plt.tight_layout()
+        plt.tight_layout()
  
+    def main():
+        # Create the layout with one column
+        col1 = st.columns(1)[0]
 
-
-
-
-# Main Streamlit app
-def main():
-    st.title('Valve status')
-
-    # List widget to select the plot
-    plot_options = ['Pressure vs Time', 'HE-PV Plot', 'Rod Load','CE PV','Flow Balance','Adiabatic FLow Balance','Delta Temp']
-    plot_choice = st.selectbox('Select Plot', plot_options)
-
-    # Display the selected plot
-    if plot_choice == 'Pressure vs Time':
-        # Plot for Stage 1
-        fig1 = plot_stage1()
-        # Plot for Stage 2
-        fig2 = plot_stage2()
-
-        # Display plots side by side using columns layout
-        col1, col2 = st.columns(2)
         with col1:
-            st.pyplot(fig1)
-        with col2:
-            st.pyplot(fig2)
-    elif plot_choice == 'HE-PV Plot':
-        # Plot for Stage 1 HE-PV
-        fig1 = plot_stage1_he_pv()
-        # Plot for Stage 2 HE-PV
-        fig2 = plot_stage2_he_pv()
+            # List widget to select the plot for Stage 1
+            plot_options = ['Pressure vs Time', 'HE-PV Plot', 'Rod Load', 'CE PV', 'Flow Balance', 'Adiabatic Flow Balance', 'Delta Temp']
+            plot_choice_stage2 = st.selectbox('Stage 2', plot_options, key='Stage 2')
 
-        # Display plots side by side using columns layout
-        col1, col2 = st.columns(2)
-        with col1:
-            st.pyplot(fig1)
-        with col2:
-            st.pyplot(fig2)
-        
-    elif plot_choice == 'Rod Load':
-        # Plot for Stage 1 Rod Load
-        fig1 = plot_stage1_rod_load()
-        # Plot for Stage 2 Rod Load
-        fig2 = plot_stage2_rod_load()
+            # Display the selected plot for Stage 1
+            if plot_choice_stage2 == 'Pressure vs Time':
+                fig2 = plot_stage2()
+            elif plot_choice_stage2 == 'HE-PV Plot':
+                fig2 = plot_stage2_he_pv()
+            elif plot_choice_stage2 == 'Rod Load':
+                fig2 = plot_stage2_rod_load()
+            elif plot_choice_stage2 == 'CE PV':
+                fig2 = plot_stage2_ce_pv()
+            elif plot_choice_stage2 == 'Flow Balance':
+                fig2 = plot_stage2_flow_balance()
+            elif plot_choice_stage2 == 'Adiabatic Flow Balance':
+                fig2 = plot_stage2_adiabatic_flow_balance()
+            elif plot_choice_stage2 == 'Delta Temp':
+                fig2 = plot_stage2_delta_temp()
 
-        # Display plots side by side using columns layout
-        col1, col2 = st.columns(2)
-        with col1:
-            st.pyplot(fig1)
-        with col2:
+            # Display the selected plot
             st.pyplot(fig2)
 
-    elif plot_choice == 'CE PV':
-        
-        fig1 = plot_stage1_ce_pv()
-        
-        fig2 = plot_stage2_ce_pv()
-
-        # Display plots side by side using columns layout
-        col1, col2 = st.columns(2)
-        with col1:
-            st.pyplot(fig1)
-        with col2:
-            st.pyplot(fig2)
-
-    elif plot_choice == 'Flow Balance':
-        
-        fig1 = plot_stage1_flow_balance()
-        
-        fig2 = plot_stage2_flow_balance()
-
-        # Display plots side by side using columns layout
-        col1, col2 = st.columns(2)
-        with col1:
-            st.pyplot(fig1)
-        with col2:
-            st.pyplot(fig2)
-
-    elif plot_choice == 'Adiabatic FLow Balance':
-        
-        fig1 = plot_stage1_adiabatic_flow_balance()
-        
-        fig2 = plot_stage2_adiabatic_flow_balance()
-
-        # Display plots side by side using columns layout
-        col1, col2 = st.columns(2)
-        with col1:
-            st.pyplot(fig1)
-        with col2:
-            st.pyplot(fig2)
-
-    elif plot_choice == 'Delta Temp':
-        
-        fig1 = plot_stage1_delta_temp()
-        
-        fig2 = plot_stage1_delta_temp()
-
-        # Display plots side by side using columns layout
-        col1, col2 = st.columns(2)
-        with col1:
-            st.pyplot(fig1)
-        with col2:
-            st.pyplot(fig2)
-
-if __name__ == "__main__":
-    main()
-
-
-from PIL import Image
-
-# Add buttons with values in front of different parts of the compressor
-st.button(label='Value 1', key='part1')
-st.button(label='Value 2', key='part2')
-st.button(label='Value 3', key='part3')
-# Define the positions of the buttons relative to the image
-#button_positions = {
-    #"Value 1": (10, 10),
-    #"Value 2": (20, 20),
-    #"Value 3": (30, 30),
-#}
-
-# Add buttons with values in specific locations on top of the image
-#for label, (x, y) in button_positions.items():
-    #st.markdown(f'<button style="position:absolute;top:{y}px;left:{x}px;">{label}</button>', unsafe_allow_html=True)
-excel_file1 = pd.read_excel(r'C:\Users\Naina Sisodia\Desktop\GERC_A_PARA_GUI_rev4.xlsm', sheet_name='cur_data')
-# Check if any value in the "flow factor" column is greater than 1.04
-valve_leakage_s1 = any(excel_file1["Flow factor for stg 1"] > 1.04)
-valve_leakage_s2 = any(excel_file1["Flow factor for stg 2"] <0)
-#cylinder_leakage = any(excel_file1["Dish temp - Ad. Disch temp"] > 8.5)
-# Define the CSS styles for red and green checkboxes
-red_checkbox_style = """<style>input[type="checkbox"].red {color:red !important;} </style>"""
-green_checkbox_style = """<style>input[type="checkbox"].green {color:green !important;} </style>"""
-
-# Display the CSS styles
-st.write("Compressor Health Monitoring:")
-col1, col2 = st.columns([10,35])
-with col1:
-    st.text("Valve Leakage_s1 :")
-with col2:
-    if valve_leakage_s1:
-        st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: red;"></div>', unsafe_allow_html=True)
-    else:
-        st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: green;"></div>', unsafe_allow_html=True)
-
-col1, col2 = st.columns([20, 70])
-
-
-with col1:
-    st.text("Valve Leakage_s2 :")
-with col2:
-    if valve_leakage_s2:
-        st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: red;"></div>', unsafe_allow_html=True)
-    else:
-        st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: green;"></div>', unsafe_allow_html=True)
-
-col1, col2 = st.columns([30, 105])
-# Open the file
-file_path = r"C:\Users\Naina Sisodia\Desktop\streamlit_dashboards\Excel to Python.py"
-with open(file_path, "r") as file:
-    
-    code_content = file.read()
-
-# Print the contents (or do whatever you want with it)
-print(code_content)
-
-@st.cache_data(ttl=60)  # Cache with a timeout of 1 min
-def load_data():
-    return pd.read_excel(r'C:\Users\Naina Sisodia\Desktop\GERC_A_PARA_GUI_rev4.xlsm', sheet_name='cur_data')
-
-# Main Streamlit app
-def main():
-    st.title("Compressor Health Monitoring")
-
-    # Load data
-    data = load_data()
-
-    # Function to check valve leakage status
-    def check_valve_leakage(data):
-        suction_valve_leak_stage1= any(df2_proc_data['Flow factor' +'S1'] > 1.04)
-        suction_valve_leak_stage2 = any(df2_proc_data['Flow factor' + 'S2'] > 1.04)
-        disch_valve_leak_stage1= any(df2_proc_data['Flow factor' +'S1'] < 0.98)
-        disch_valve_leak_stage2= any(df2_proc_data['Flow factor' + 'S2'] < 0.98)
-        cylinder_leak_stage1= any(df2_proc_data['Dish temp - Ad. Disch temp' + 'S1'] > 8.5)
-        cylinder_leak_stage2= any(df2_proc_data['Dish temp - Ad. Disch temp' + 'S2'] > 8.5)
-        return suction_valve_leak_stage1, suction_valve_leak_stage2,disch_valve_leak_stage1,disch_valve_leak_stage2
-        return cylinder_leak_stage1, cylinder_leak_stage2
-
-    # Check valve leakage status
-    suction_valve_leak_stage1, suction_valve_leak_stage2, disch_valve_leak_stage1, disch_valve_leak_stage2 = check_valve_leakage(data)
-    
-    # CSS styles
-    red_checkbox_style = """<style>input[type="checkbox"].red {color:red !important;} </style>"""
-    green_checkbox_style = """<style>input[type="checkbox"].green {color:green !important;} </style>"""
-
-    # Display valve leakage status
-    st.write("Compressor Health Monitoring:")
-    col1, col2 = st.columns([30,50])
-    with col1:
-        st.text("suction valve leak - stage 1 :")
-    with col2:
-        if suction_valve_leak_stage1:
-            st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: red;"></div>', unsafe_allow_html=True)
-        else:
-            st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: green;"></div>', unsafe_allow_html=True)
-
-    col1, col2 = st.columns([60, 100])
-
-    with col1:
-        st.text("suction valve leak - stage 2:")
-    with col2:
-        if suction_valve_leak_stage2:
-            st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: red;"></div>', unsafe_allow_html=True)
-        else:
-            st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: green;"></div>', unsafe_allow_html=True)
-
-    col1, col2 = st.columns([90, 150])
-
-    with col1:
-        st.text("Discharge valve leak - stage 1:")
-    with col2:
-        if disch_valve_leak_stage1:
-            st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: red;"></div>', unsafe_allow_html=True)
-        else:
-            st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: green;"></div>', unsafe_allow_html=True)
-    col1, col2 = st.columns([120, 200])
-    with col1:
-        st.text("Discharge valve leak - stage 2:")
-    with col2:
-        if disch_valve_leak_stage2:
-            st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: red;"></div>', unsafe_allow_html=True)
-        else:
-            st.markdown('<div style="display: inline-block; width: 20px; height: 20px; background-color: green;"></div>', unsafe_allow_html=True)
-    
-
-if __name__ == "__main__":
-    main()
-# %%
+    if __name__ == "__main__":
+        main()
