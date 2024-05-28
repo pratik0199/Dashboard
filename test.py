@@ -237,8 +237,8 @@ with col1:
         st.write("Valve Health Status", fontsize=12, fontweight='bold')
         st.write(df.to_html(escape=False), unsafe_allow_html=True)
         #st.write("Refreshing data in 60 seconds...")
-        time.sleep(60)
-        st.experimental_rerun()
+        #time.sleep(60)
+        #st.experimental_rerun()
     if __name__ == "__main__":
         main()
 
